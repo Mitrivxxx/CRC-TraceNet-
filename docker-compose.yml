@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:17
+    container_name: netsim-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-netsim}
+      POSTGRES_USER: ${POSTGRES_USER:-netsim}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-netsim}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-netsim} -d ${POSTGRES_DB:-netsim}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: src/NetSim.Api/Dockerfile
+    container_name: netsim-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ConnectionStrings__Default: "Host=db;Port=5432;Database=${POSTGRES_DB:-netsim};Username=${POSTGRES_USER:-netsim};Password=${POSTGRES_PASSWORD:-netsim}"
+      Cors__AllowedOrigins: "http://localhost:${WEB_PORT:-5173},http://localhost"
+    ports:
+      - "${API_PORT:-5080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: "http://localhost:${API_PORT:-5080}"
+    container_name: netsim-web
+    ports:
+      - "${WEB_PORT:-5173}:80"
+    depends_on:
+      - api
+
+volumes:
+  db-data:

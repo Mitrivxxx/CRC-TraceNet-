@@ -1,0 +1,16 @@
+---
+description: Aktualizuj AGENTS.md po kazdej zmianie kodu
+alwaysApply: true
+---
+
+# Sync agentow (AGENTS.md)
+
+Po **kazdej** zmianie kodu w tej sesji zaktualizuj `AGENTS.md`:
+
+1. Znajdz agentow, ktorych dotyczy zmiana (`backend`, `frontend`, `crc`, `transmission`, `infra`, `docs`, `sprint`).
+2. Popraw **Status**, **Pliki**, **Notatki** — krotko (bez eseju).
+3. Nowe pliki / endpointy / komponenty → dopisz do listy Pliki.
+4. Usuniete lub przeniesione → popraw sciezki.
+5. Zakonczenie zadania sprintu → odznacz w `docs/r1.md` i zaktualizuj `sprint` + Status.
+
+Nie tworz nowych agentow bez potrzeby. Trzymaj opisy krotkie (max ~8 linii na agenta).
